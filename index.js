@@ -9,9 +9,13 @@ const db = require('./data/db')
 
 server.get('/api/users', (req, res) => {
     db.find()
-    .then()
-    .catch()
-  res.status(200).json(users);
+    .then((users) => {
+        res.status(200).json(users);
+    })
+    .catch(err => {
+        res.status(500)
+        .json({message: "failed to get users"})
+    })
 });
 
 server.listen(8000, () => console.log('API running on port 8000'));
