@@ -3,7 +3,10 @@
 const express = require('express');
 
 const server = express();
-const db = require('./data/db')
+const db = require('./data/db');
+const parser = express.json();
+
+server.use(parser);
 
 // ENDPOINTS
 
@@ -24,7 +27,11 @@ server.get('/api/users/:id', (req, res) => {
     const { id } = req.params;
     db.findById(id)
     .then((user) => {
-        res.status(200).json(user);
+        if (user) {
+            res.status(200).json(user);
+        } else {
+            res.status(404).json({message: "user doesn't exist"});
+        }
     })
     .catch(err => {
         res.status(500)
@@ -32,6 +39,19 @@ server.get('/api/users/:id', (req, res) => {
     })
 });
 
+// POST API/USERS
+server.post('/api/users', (req, res) => {
+    const user = req.body;
+    db.insert(user)
+    .then((user) => {
+            res.status(200).json(user);
+    })
+    .catch(err => {
+        res.status(500)
+        .json({message: "failed to insert user in db"});
+    })
+});
+
 // SERVER LISTENING
 
-server.listen(8000, () => console.log('API running on port 8000'));
+server.listen(7000, () => console.log('API running on port 7000'));
